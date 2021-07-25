@@ -8,7 +8,8 @@ const getWorks = (ressource) => {
 					throw {
 						status: request.status,
 						statusText: request.statusText,
-						content: null
+						content: null,
+						ressource
 					};
 				if (request.readyState === 4 && request.status === 200) {
 					const obj = {};
@@ -28,7 +29,15 @@ const getWorks = (ressource) => {
 };
 getWorks("data.json")
 	.then((data) => {
-		console.log(data);
+		console.log("first promise" + data);
+		return getWorks("datsa.json");
+	})
+	.then((data) => {
+		console.log("second promise" + data);
+		return getWorks("data.json");
+	})
+	.then((data) => {
+		console.log("troisieme promise" + data);
 	})
 	.catch((error) => {
 		console.log(error);
