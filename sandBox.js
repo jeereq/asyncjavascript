@@ -1,33 +1,38 @@
 const request = new XMLHttpRequest();
 
-const getWorks = (ressource, callback) => {
-	request.addEventListener("readystatechange", () => {
-		try {
-			if (request.readyState === 4 && request.status === 404)
-				throw {
-					status: request.status,
-					statusText: request.statusText,
-					data: null
-				};
-			if (request.readyState === 4 && request.status === 200) {
-				const obj = {};
-				obj.status = 200;
-				obj.statusText = request.statusText;
-				obj.data = JSON.parse(request.responseText);
-				callback(null, obj);
+const getWorks = (ressource) => {
+	return new Promise((resolve, reject) => {
+		request.addEventListener("readystatechange", () => {
+			try {
+				if (request.readyState === 4 && request.status === 404)
+					throw {
+						status: request.status,
+						statusText: request.statusText,
+						content: null
+					};
+				if (request.readyState === 4 && request.status === 200) {
+					const obj = {};
+					obj.status = 200;
+					obj.statusText = request.statusText;
+					obj.content = JSON.parse(request.responseText);
+					resolve(obj);
+				}
+			} catch (error) {
+				reject(error);
 			}
-		} catch (error) {
-			callback(error, null);
-		}
-	});
+		});
 
-	request.open("get", ressource);
-	request.send();
+		request.open("get", ressource);
+		request.send();
+	});
 };
-getWorks("data.jsons", (error, data) => {
-	if (error) console.log(error);
-	else console.log(data);
-});
+getWorks("data.json")
+	.then((data) => {
+		console.log(data);
+	})
+	.catch((error) => {
+		console.log(error);
+	});
 const getSomething = () => {
 	return new Promise((resolve, reject) => {
 		//	resolve("hello guys ");
@@ -35,11 +40,10 @@ const getSomething = () => {
 	});
 };
 
-getSomething().then(
-	(data) => {
+getSomething()
+	.then((data) => {
 		console.log(data);
-	},
-	(error) => {
+	})
+	.catch((error) => {
 		console.log(error);
-	}
-);
+	});
